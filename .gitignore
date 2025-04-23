@@ -1,32 +1,119 @@
-# Prerequisites
-*.d
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+class Engine {
+public:
+    string engine_no;
+    string company;
+    float volume;
 
-# Precompiled Headers
-*.gch
-*.pch
+    Engine(string eno = "", string comp = "", float vol = 0.0)
+        : engine_no(eno), company(comp), volume(vol) {
+    }
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+    void show() const {
+        cout << "Engine No: " << engine_no << ", Company: " << company << ", Volume: " << volume << endl;
+    }
+};
 
-# Fortran module files
-*.mod
-*.smod
+class Vehicle {
+public:
+    int id;
+    string model;
+    string vendor;
+    Engine engine;
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+    Vehicle(int id, string model, string vendor, Engine engine)
+        : id(id), model(model), vendor(vendor), engine(engine) {
+    }
 
-# Executables
-*.exe
-*.out
-*.app
+    virtual void show() const = 0;
+};
+
+class Car : public Vehicle {
+public:
+    bool hasSpoiler;
+
+    Car(int id, string model, string vendor, Engine engine, bool hasSpoiler)
+        : Vehicle(id, model, vendor, engine), hasSpoiler(hasSpoiler) {
+    }
+
+    void show() const override {
+        cout << "Car => ID: " << id << ", Model: " << model << ", Vendor: " << vendor
+            << ", Has Spoiler: " << (hasSpoiler) << endl;
+        engine.show();
+    }
+};
+
+class Ship : public Vehicle {
+public:
+    bool hasSail;
+
+    Ship(int id, string model, string vendor, Engine engine, bool hasSail)
+        : Vehicle(id, model, vendor, engine), hasSail(hasSail) {
+    }
+
+    void show() const override {
+        cout << "Ship => ID: " << id << ", Model: " << model << ", Vendor: " << vendor
+            << ", Has Sail: " << (hasSail) << endl;
+        engine.show();
+    }
+};
+
+class Airplane : public Vehicle {
+public:
+    int engineCount;
+    int passengersCapacity;
+
+    Airplane(int id, string model, string vendor, Engine engine, int engineCount, int passengersCapacity)
+        : Vehicle(id, model, vendor, engine), engineCount(engineCount), passengersCapacity(passengersCapacity) {
+    }
+
+    void show() const override {
+        cout << "Airplane => ID: " << id << ", Model: " << model << ", Vendor: " << vendor
+            << ", Engine Count: " << engineCount << ", Passenger Capacity: " << passengersCapacity << endl;
+        engine.show();
+    }
+};
+
+class VehicleDepo {
+public:
+    vector<Car> cars;
+    vector<Ship> ships;
+    vector<Airplane> airplanes;
+
+    void showAllVehicle() {
+        cout << "Cars:"<<endl;
+        for (const auto& car : cars)
+            car.show();
+        cout << endl;
+        cout << "Ships:" << endl;
+        for (const auto& ship : ships)
+            ship.show();
+        cout << endl;
+        cout << "Airplanes:" << endl;
+        for (const auto& airplane : airplanes)
+            airplane.show();
+        cout << endl;
+    }
+};
+
+void main() {
+    Engine supraEngine("SUP123", "Toyota", 3.0);
+    Engine titanicEngine("TIT456", "Harland & Wolff", 15.0);
+    Engine airbusEngine("A380ENG", "Rolls Royce", 18.0);
+
+    Car supra(101, "Supra", "Toyota", supraEngine, true);
+    Ship titanic(202, "Titanic", "White Star Line", titanicEngine, true);
+    Airplane airbusA380(303, "A380", "Airbus", airbusEngine, 4, 853);
+
+    VehicleDepo depo;
+    depo.cars.push_back(supra);
+    depo.ships.push_back(titanic);
+    depo.airplanes.push_back(airbusA380);
+
+    depo.showAllVehicle();
+
+}
